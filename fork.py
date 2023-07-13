@@ -12,14 +12,12 @@ cpu_count = multiprocessing.cpu_count()
 
 args = parser.parse_args()
 
-#' '.join(args.flags)
-
+errorout = open("error.txt", "w")
 
 for i in range(cpu_count):
   if (i == 0):
-    subprocess.Popen(["afl-fuzz", "-m", "none", "-D", "-i", args.input, "-o", args.output, "-M", "Master", "-b", str(i), "-s", "123", "--", args.FILE, args.flags, "@@"])
-    #print("afl-fuzz -m none -D -i " + args.input + " -o " + args.output + "-M Master -b " + str(i) + " -s 123 -- " + args.FILE + " " + args.flags + " @@")
-  #else:
-    #slavenum = "slave" + str(i)
-    #subprocess.Popen(["afl-fuzz", "-m", "none", "-i", args.input, "-o", args.output, "-S", slavenum, "-b", str(i), "--", args.FILE, "@@"])
+    subprocess.Popen(["tmux new-window \; send-keys 'afl-fuzz -i " + args.input + " -o " + args.output + " -m none -D -M Master -b " + str(i) + " -s 123 -- " + args.FILE + " " + args.flags + " @@' Enter"], shell=True)
+  else:
+    slavenum = "slave" + str(i)
+    subprocess.Popen(["tmux new-window \; send-keys 'afl-fuzz -i " + args.input + " -o " + args.output + " -m none -S Slave" + str(i) + " -b " + str(i) + " -s 12" + str(i) + "  -- " + args.FILE + " " + args.flags + " @@' Enter"], shell=True)
 

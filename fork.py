@@ -20,13 +20,13 @@ errorout = open("error.txt", "w")
 for i in range(cpu_count):
   if (i == 0):
     if(args.qemu):
-      subprocess.Popen(["tmux new-window \; send-keys 'QEMU_LD_PREFIX=" + args.library + " afl-fuzz -Q -i " + args.input + " -o " + args.output + " -m none -D -M Master -b " + str(i) + " -- " + args.FILE  + " @@' Enter"], shell=True)
+      subprocess.Popen(["tmux new-window \; send-keys 'QEMU_LD_PREFIX=" + args.library + " afl-fuzz -Q -t 8000 -i " + args.input + " -o " + args.output + " -m none  -M Master -b " + str(i) + " -- " + args.FILE  + " @@' Enter"], shell=True)
     else:
-      subprocess.Popen(["tmux new-window \; send-keys 'afl-fuzz -i " + args.input + " -o " + args.output + " -x " + args.dictionary + " -m none -D -M Master -b " + str(i) + " -s 123 -- " + args.FILE + " " + args.flags + " @@' Enter"], shell=True)
+      subprocess.Popen(["tmux new-window \; send-keys 'afl-fuzz -Q -i " + args.input + " -o " + args.output + " -x " + args.dictionary + " -m none -D -M Master -b " + str(i) + " -s 123 -- " + args.FILE + " " + args.flags + " @@' Enter"], shell=True)
   else:
     slavenum = "slave" + str(i)
     if(args.qemu):
-      subprocess.Popen(["tmux new-window \; send-keys 'QEMU_LD_PREFIX=" + args.library + " afl-fuzz -Q -i " + args.input + " -o " + args.output + " -m none -S Slave" + str(i) + " -b " + str(i) + " -- " + args.FILE + " @@' enter"], shell=True)
+      subprocess.Popen(["tmux new-window \; send-keys 'QEMU_LD_PREFIX=" + args.library + " afl-fuzz -Q -t 8000 -i " + args.input + " -o " + args.output + " -m none -S Slave" + str(i) + " -b " + str(i) + " -- " + args.FILE + " @@' enter"], shell=True)
     else:
       subprocess.Popen(["tmux new-window \; send-keys 'afl-fuzz -i " + args.input + " -o " + args.output + " -x " + args.dictionary + " -m none -s slave" + str(i) + " -b " + str(i) + " -s 12" + str(i) + "  -- " + args.FILE + " " + args.flags + " @@' enter"], shell=True)
 
